@@ -203,16 +203,20 @@ module PuavoTFTP
     # Send current block to the client
     def send_packet
       clear_timeout
-      send_datagram(@current, @ip, @port)
+      _send_datagram(@current, @ip, @port)
       @on_data.call(@current, @ip, @port) if not @on_data.nil?
       set_timeout
+    end
+
+    def _send_datagram(a,b,c)
+      send_datagram(a,b,c)
     end
 
     # Set DATA packet to be sent on next send_packet call
     def set_next_data_packet
       @block_num += 1
 
-      block = @data.byteslice((@block_num-1) * @block_size, @block_size)
+      block = _byteslice((@block_num-1) * @block_size, @block_size)
       @current_block_size = block.size
 
       start = (@block_num-1)*@block_size
@@ -222,6 +226,14 @@ module PuavoTFTP
         "(#{ @current_block_size }) of #{ @data.size }"
       )
 
+      _pack(block)
+    end
+
+    def _byteslice(a,b)
+      @data.byteslice(a,b)
+    end
+
+    def _pack(block)
       @current = [Opcode::DATA, @block_num, block].pack("nna*")
     end
 
@@ -284,3 +296,12 @@ module PuavoTFTP
   end
 
 end
+
+
+require "method_profiler"
+profiler = MethodProfiler.observe(PuavoTFTP::FileSender)
+Signal.trap("INT") do
+  puts profiler.report.sort_by(:total_time).order(:ascending)
+  Process.exit(1)
+end
+
