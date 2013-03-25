@@ -26,7 +26,7 @@ Gem::Specification.new { |s|
 		'puavo-tftpd',
 	]
 	s.required_ruby_version = '>= 1.9.2'
-	s.add_runtime_dependency "eventmachine", "~> 1.0.3"
+	s.add_runtime_dependency "eventmachine", "~> 1.0"
 }
 
 
