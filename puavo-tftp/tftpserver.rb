@@ -1,4 +1,5 @@
 
+require "rubygems"
 require "eventmachine"
 require "socket"
 
