@@ -1,9 +1,9 @@
 
 description "puavo-tftpd"
- 
+
 start on runlevel [23]
 stop on shutdown
- 
-exec /usr/sbin/puavo-tftpd -r /var/lib/tftpboot/ --user puavo --group puavo
- 
+
+exec /usr/bin/ruby1.9.3 /usr/sbin/puavo-tftpd -r /var/lib/tftpboot/ --user puavo --group puavo
+
 respawn
