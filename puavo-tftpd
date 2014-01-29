@@ -1,5 +1,18 @@
 #!/usr/bin/ruby
 
+# Try not to crash on older rubies...
+class String
+  if not method_defined?(:byteslice)
+    STDERR.puts "WARNING: Using old ruby version! puavo-tftp requires at least 1.9"
+    # Borrowed from: https://bugs.ruby-lang.org/issues/4447
+    # This is probably extremely slow...
+    def byteslice(*args)
+      unpack('C').slice(*args).pack('C')
+    end
+  end
+end
+
+
 require "etc"
 require "yaml"
 
