@@ -9,27 +9,27 @@ $LOAD_PATH.unshift( File.dirname(__FILE__) )
 
 ENV['LDAPTLS_REQCERT'] = 'demand'
 
-require 'puavo-ldap'
 require 'puavo'
 require 'puavo/lts'
+require 'puavo/ldap'
 
 @get_request = ARGV[0]
 @ip = ARGV[1]
 
 if not @ip
   puts "Invalid IP-address"
-  exit
+  exit 1
 end
 begin
   # Get MAC-address by IP
   @mac = `arp -n #{ @ip }`.split("\n").last.match(/(([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2})/)[1]
 rescue
-  puts "Invalid IP-address"
-  exit
+  puts "Cannot find ip (#{ @ip }) from arp table"
+  exit 1
 end
 
 # Create ldap connection
-@puavoldap = PuavoLdap.new
+@puavoldap = Puavo::Ldap.new
 
 ldap_device = @puavoldap.device_by_mac(@mac)
 device = Puavo::Client::Base.new_by_ldap_entry( ldap_device )

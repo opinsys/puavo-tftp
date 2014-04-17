@@ -32,7 +32,7 @@ module PuavoTFTP
 
 
       @timer = EventMachine::PeriodicTimer.new(1) do
-        return if @packet_sent.nil?
+        next if @packet_sent.nil?
 
         diff = Time.now - @packet_sent
         if TIMEOUT < diff
@@ -85,6 +85,14 @@ module PuavoTFTP
       rescue Errno::ENOENT
         l "ERROR: cannot find file #{ name }"
         send_error_packet(ErrorCode::NOT_FOUND, "No found :(")
+        return
+      rescue Errno::EISDIR
+        l "ERROR: cannot read a directory #{ name }"
+        send_error_packet(ErrorCode::NOT_FOUND, "Is a directory :(")
+        return
+      rescue Errno::EACCES
+        l "ERROR: permission denied #{ name }"
+        send_error_packet(ErrorCode::NOT_FOUND, "Permission denied :(")
         return
       end
 
