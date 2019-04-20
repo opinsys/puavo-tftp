@@ -1,1 +1,5 @@
 debian
+
+# Ignore the built gem:
+/*.gem
+
